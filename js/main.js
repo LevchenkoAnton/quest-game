@@ -1,3 +1,3 @@
 import router from "./router";
 
-router.showWelcome();
+router.start();

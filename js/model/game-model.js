@@ -1,11 +1,9 @@
 import {changeLevel, die, INITIAL_GAME, tickTime} from "../data/quest-utils";
-import {QUEST_DATA} from "../data/quest-data";
-
-const getLevel = (level) => QUEST_DATA[`level-` + level];
 
 export default class GameModel {
-  constructor(playerName) {
+  constructor(questData, playerName) {
     this.playerName = playerName;
+    this._questData = questData;
     this.restart();
   }
 
@@ -22,7 +20,7 @@ export default class GameModel {
   }
 
   getCurrentLevel() {
-    return getLevel(this._state.level);
+    return this._questData[`level-${this._state.level}`];
   }
 
   die() {
