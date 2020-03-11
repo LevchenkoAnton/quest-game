@@ -15,7 +15,7 @@ const preprocessAnswer = answer => answer.map(answer => {
     }
 });
 
-export const adaptServerDate = data => {
+export const adaptServerData = data => {
     for (const levelData of Object.values(data)) {
         levelData.answers = preprocessAnswer(levelData.answers);
     }

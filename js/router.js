@@ -5,15 +5,7 @@ import GameModel from "./model/game-model";
 import ScoreboardView from "./views/scoreboard-view";
 import ErrorView from "./views/error-view";
 import LoaderView from "./views/loader-view";
-import {adaptServerDate} from "./data/data-adapter";
-
-const databaseUrl = `https://es.dump.academy/text-quest/quest`;
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status <= 300) {
-    return response;
-  }
-  throw new Error(`${response.status} ${response.statusText}`);
-};
+import Loader from "./data/loader";
 
 let questData;
 
@@ -23,9 +15,7 @@ export default class Router {
     changeScreen(loaderView.element);
     loaderView.start();
 
-    fetch(databaseUrl)
-        .then(checkStatus)
-        .then(response => response.json())
+    Loader.loadData()
         .then(data => questData = data)
         .then(response => Router.showWelcome())
         .catch(Router.showError)
@@ -38,15 +28,22 @@ export default class Router {
   }
 
   static showGame(playerName) {
-    const game = new GameScreen( new GameModel(adaptServerDate(questData), playerName) );
+    const game = new GameScreen( new GameModel(questData, playerName) );
     changeScreen(game.element);
     game.startGame();
   }
 
   static showScoreBoard(model) {
-    const scoreboard = new ScoreboardView(model);
+    const playerName = model.playerName;
+    const scoreboard = new ScoreboardView();
+
     scoreboard.onGameAgain = this.start;
     changeScreen(scoreboard.element);
+
+    Loader.saveResults(model.state, playerName)
+        .then(() => Loader.loadResults(playerName))
+        .then(score => scoreboard.showScoreboard(score))
+        .catch(Router.showError);
   }
 
   static showError(error) {

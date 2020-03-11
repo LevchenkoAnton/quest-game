@@ -1,29 +1,11 @@
 import AbstractView from "./abstract-view";
 
 export default class ScoreboardView extends AbstractView {
-  constructor(model) {
-    super();
-    this._model = model;
-  }
-
   get template() {
     return `
       <div class="end">
       <div class="scoreboard">
-        <h1>Мои лучшие результаты</h1>
-
-        <table class="scores">
-          <tbody>
-          <tr>
-            <td>
-              <small>1.</small>
-            </td>
-            <td style="text-align: right;">${this._model.state.time} сек:</td>
-            <td>${this._model.playerName}, ${Array.from(this._model.state.lives).map(it => `❤`).join(``)}</td>
-            <td>${new Date().toLocaleDateString()}</td>
-          </tr>
-          </tbody>
-        </table>
+           Loading scoreboard ...
       </div>
       <br>
       <div class="repeat">
@@ -39,6 +21,29 @@ export default class ScoreboardView extends AbstractView {
     gameAgainBtn.addEventListener(`click`, () => {
       this.onGameAgain();
     });
+
+    this._scoreBoard = this.element.querySelector('.scoreboard');
+  }
+
+  showScoreboard(scores) {
+    this._scoreBoard.innerHTML = `
+      <h1>Мои лучшие результаты</h1>
+
+      <table class="scores">
+        <tbody>
+        ${scores.map((it, i) => `
+          <tr>
+            <td>
+              <small>${i + 1}.</small>
+            </td>
+            <td style="text-align: right;">${it.time} сек:</td>
+            <td>${it.name}, ${Array.from(it.lives).map(() => `❤`).join(``)}</td>
+            <td>${new Date(it.date).toLocaleDateString()}</td>
+          </tr>
+        `)}
+        </tbody>
+      </table>
+    `;
   }
 
   onGameAgain() {}
