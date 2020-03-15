@@ -11,15 +11,20 @@ let questData;
 
 export default class Router {
   static start() {
+    Router.load().catch(Router.showError);
+  }
+
+  static async load() {
     const loaderView = new LoaderView();
     changeScreen(loaderView.element);
     loaderView.start();
 
-    Loader.loadData()
-        .then(data => questData = data)
-        .then(response => Router.showWelcome())
-        .catch(Router.showError)
-        .finally(() => loaderView.stop());
+    try {
+      questData = await Loader.loadData();
+      Router.showWelcome();
+    } finally {
+      loaderView.stop();
+    }
   }
 
   static showWelcome() {
@@ -33,17 +38,22 @@ export default class Router {
     game.startGame();
   }
 
-  static showScoreBoard(model) {
+  static async showScoreBoard(model) {
     const playerName = model.playerName;
     const scoreboard = new ScoreboardView();
 
     scoreboard.onGameAgain = this.start;
     changeScreen(scoreboard.element);
 
-    Loader.saveResults(model.state, playerName)
-        .then(() => Loader.loadResults(playerName))
-        .then(score => scoreboard.showScoreboard(score))
-        .catch(Router.showError);
+    try {
+      await Loader.saveResults(model.state, playerName);
+
+      const score = await Loader.loadResults(playerName);
+
+      scoreboard.showScoreboard(score)
+    } catch (e) {
+      Router.showError(e);
+    }
   }
 
   static showError(error) {

@@ -11,41 +11,44 @@ const checkStatus = (response) => {
 };
 
 export default class Loader {
-    static loadData() {
-        return fetch(`${DATABASE_URL}/quest`)
-            .then(checkStatus)
-            .then(response => response.json())
-            .then(adaptServerData)
-            .catch(err => {
-                console.log(`loadData method error: ${err}`);
-                throw new Error(err);
-            });
+    static async loadData() {
+        try {
+            const gameDataResponse = await fetch(`${DATABASE_URL}/quest`);
+            checkStatus(gameDataResponse);
+            const gameData = await gameDataResponse.json();
+            return adaptServerData(gameData);
+        } catch (e) {
+            console.log(`loadData method error: ${e}`);
+            throw new Error(e);
+        }
     }
 
-    static loadResults(name = DEFAULT_NAME) {
-        return fetch(`${DATABASE_URL}/stats/${APP_ID}-${name}`)
-            .then(checkStatus)
-            .then(response => response.json())
-            .catch(err => {
-                console.log(`loadResults method error: ${err}`);
-                throw new Error(err);
-            });
+    static async loadResults(name = DEFAULT_NAME) {
+        try {
+            const resultsResponse = await fetch(`${DATABASE_URL}/stats/${APP_ID}-${name}`);
+            checkStatus(resultsResponse);
+            return await resultsResponse.json();
+        } catch (e) {
+            console.log(`loadResults method error: ${e}`);
+            throw new Error(e);
+        }
     }
 
-    static saveResults(data, name = DEFAULT_NAME) {
-        data = Object.assign({name}, data);
+    static async saveResults(data, name = DEFAULT_NAME) {
         const requestSettings = {
-            body: JSON.stringify(data),
+            body: JSON.stringify({...data, name}),
             headers: {
                 'Content-type': 'application/json'
             },
             method: 'POST'
         };
-        return fetch(`${DATABASE_URL}/stats/${APP_ID}-${name}`, requestSettings)
-            .then(checkStatus)
-            .catch(err => {
-                console.log(`saveResult method error: ${err}`);
-                throw new Error(err);
-            });
+
+        try {
+            const saveResultsResponse = await fetch(`${DATABASE_URL}/stats/${APP_ID}-${name}`, requestSettings);
+            checkStatus(saveResultsResponse);
+        } catch (e) {
+            console.log(`saveResult method error: ${e}`);
+            throw new Error(e);
+        }
     }
 }
