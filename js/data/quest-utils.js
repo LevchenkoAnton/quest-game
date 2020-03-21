@@ -12,6 +12,10 @@ export const RESULT = {
 
 export const KEY_CODES = {ENTER: 13};
 
+export const DEFAULT_NAME = 'Mario';
+
+export const MAX_SCORES_TO_SHOW = 10;
+
 export const changeLevel = (state, level) => {
   if (typeof level !== `number`) {
     throw new Error(`Level should be only number`);

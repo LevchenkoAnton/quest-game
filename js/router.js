@@ -1,22 +1,24 @@
 import WelcomeView from "./views/welcome-view";
-import {changeScreen} from "./util";
+import {changeView, compareObjByField} from "./util";
 import GameScreen from "./game-screen";
 import GameModel from "./model/game-model";
 import ScoreboardView from "./views/scoreboard-view";
 import ErrorView from "./views/error-view";
 import LoaderView from "./views/loader-view";
 import Loader from "./data/loader";
+import {MAX_SCORES_TO_SHOW} from "./data/quest-utils";
+import {sortScores} from "./data/data-adapter";
 
 let questData;
 
 export default class Router {
   static start() {
-    Router.load().catch(Router.showError);
+    Router.load();
   }
 
   static async load() {
     const loaderView = new LoaderView();
-    changeScreen(loaderView.element);
+    changeView(loaderView.element);
     loaderView.start();
 
     try {
@@ -29,12 +31,12 @@ export default class Router {
 
   static showWelcome() {
     const welcome = new WelcomeView();
-    changeScreen(welcome.element);
+    changeView(welcome.element);
   }
 
   static showGame(playerName) {
     const game = new GameScreen( new GameModel(questData, playerName) );
-    changeScreen(game.element);
+    changeView(game.element);
     game.startGame();
   }
 
@@ -43,14 +45,13 @@ export default class Router {
     const scoreboard = new ScoreboardView();
 
     scoreboard.onGameAgain = this.start;
-    changeScreen(scoreboard.element);
+    changeView(scoreboard.element);
 
     try {
       await Loader.saveResults(model.state, playerName);
-
       const score = await Loader.loadResults(playerName);
 
-      scoreboard.showScoreboard(score)
+      scoreboard.showScoreboard( sortScores(score).slice(0, MAX_SCORES_TO_SHOW) );
     } catch (e) {
       Router.showError(e);
     }
@@ -58,6 +59,6 @@ export default class Router {
 
   static showError(error) {
     const errorView = new ErrorView(error);
-    changeScreen(errorView.element);
+    changeView(errorView.element);
   }
 }

@@ -37,10 +37,14 @@ export default class ScoreboardView extends AbstractView {
               <small>${i + 1}.</small>
             </td>
             <td style="text-align: right;">${it.time} сек:</td>
-            <td>${it.name}, ${Array.from(it.lives).map(() => `❤`).join(``)}</td>
+            <td>${it.name}</td>
+            <td>
+                ${new Array(3 - it.lives).fill(`<span class="heart__empty">♡</span>`).join(``)}
+                ${new Array(it.lives).fill(`<span class="heart__full">♥</span>`).join(``)}
+            </td>
             <td>${new Date(it.date).toLocaleDateString()}</td>
           </tr>
-        `)}
+        `).join(``)}
         </tbody>
       </table>
     `;

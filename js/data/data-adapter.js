@@ -1,4 +1,5 @@
 import {RESULT} from "./quest-utils";
+import {compareArrayByObjectField} from "../util";
 
 const ServerTwoResultMapper = {
     'die': RESULT.DIE,
@@ -21,4 +22,17 @@ export const adaptServerData = data => {
     }
 
     return data;
+};
+
+
+export const sortScores = score => {
+    return score.sort(compareArrayByObjectField({
+        time: -1,
+        lives: 1,
+        name: -1
+    }));
+};
+
+export const adaptServerScores = score => {
+    return Object.keys(score).map(key => ({...score[key]}));
 };

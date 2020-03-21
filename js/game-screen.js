@@ -83,7 +83,7 @@ export default class GameScreen {
   }
 
   _restart() {
-    this.changeLevel();
+    this.startGame();
   }
 
   _exit() {
