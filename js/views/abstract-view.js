@@ -26,4 +26,6 @@ export default class AbstractView {
   }
 
   bind() {}
+
+  onFocus() {}
 }

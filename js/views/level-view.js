@@ -21,16 +21,16 @@ export default class LevelView extends AbstractView {
   }
 
   bind(element) {
-    const answerInput = element.querySelector(`.answer-input`);
+    this._answerInput = element.querySelector(`.answer-input`);
     const answersList = element.querySelector(`.answers`);
     const answers = Array.from(element.querySelectorAll(`.answer`));
 
-    answerInput.addEventListener(`keydown`, ({keyCode}) => {
+    this._answerInput.addEventListener(`keydown`, ({keyCode}) => {
       if (keyCode !== KEY_CODES.ENTER) {
         return;
       }
 
-      const answer = this._level.answers.find( ({action}) => action === answerInput.value.toLowerCase() );
+      const answer = this._level.answers.find( ({action}) => action === this._answerInput.value.toLowerCase() );
 
       this.onAnswer(answer);
     });
@@ -49,4 +49,8 @@ export default class LevelView extends AbstractView {
   }
 
   onAnswer() {}
+
+  onFocus() {
+    this._answerInput.focus();
+  }
 }

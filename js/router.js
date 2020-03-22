@@ -32,6 +32,7 @@ export default class Router {
   static showWelcome() {
     const welcome = new WelcomeView();
     changeView(welcome.element);
+    welcome.onFocus();
   }
 
   static showGame(playerName) {

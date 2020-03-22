@@ -21,12 +21,12 @@ export default class WelcomeView extends AbstractView {
 
   bind(element) {
     const agreeBtn = element.querySelector(`.repeat-action`);
-    const playerNameInput = element.querySelector(`.player-name`);
+    this._playerNameInput = element.querySelector(`.player-name`);
 
     agreeBtn.addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
-      const playerName = playerNameInput.value.trim();
+      const playerName = this._playerNameInput.value.trim();
       if (!playerName) {
         return;
       }
@@ -34,8 +34,8 @@ export default class WelcomeView extends AbstractView {
       Router.showGame(playerName);
     });
 
-    playerNameInput.addEventListener(`keydown`, ({target, keyCode}) => {
-      const playerName = playerNameInput.value.trim();
+    this._playerNameInput.addEventListener(`keydown`, ({target, keyCode}) => {
+      const playerName = this._playerNameInput.value.trim();
 
       if (!playerName || keyCode !== KEY_CODES.ENTER) {
         return;
@@ -43,5 +43,9 @@ export default class WelcomeView extends AbstractView {
 
       Router.showGame(playerName);
     });
+  }
+
+  onFocus() {
+    this._playerNameInput.focus();
   }
 }

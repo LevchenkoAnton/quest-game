@@ -41,6 +41,8 @@ export default class GameScreen {
     level.onAnswer = this.answer.bind(this);
 
     this._changeContent(level);
+
+    level.onFocus();
   }
 
   answer(answer) {
